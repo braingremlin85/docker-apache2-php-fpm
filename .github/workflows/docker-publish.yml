@@ -10,6 +10,8 @@ on:
   #  - cron: '15 10 * * *'
   push:
     #  - main
+    tags:
+      - 'v*'
     # Publish semver tags as releases.
     #tags: [ 'v*.*.*' ]
   #pull_request:
@@ -105,10 +107,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
-            type=ref,event=branch
+            #type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             #type=semver,pattern={{major}}.{{minor}}
+            # set latest tag for default branch
+            type=raw,value=latest,enable={{is_default_branch}}            
 
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
