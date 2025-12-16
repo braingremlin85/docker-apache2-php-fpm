@@ -107,7 +107,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=raw,value=${{ github.ref_name }}
+            type=raw,value=${{ github.ref_name }} # pass tag as raw value, due to vx.x-8x format not being semver friendly
             #type=semver,pattern={{version}},value=${{ github.ref_name }}
             #type=semver,pattern={{major}}.{{minor}},value=${{ github.ref_name }}
 
