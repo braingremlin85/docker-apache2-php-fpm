@@ -20,7 +20,7 @@ env:
   #REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   #IMAGE_NAME: ${{ github.repository }}
-  REGISTRY_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/apache2-php82-fpm
+  REGISTRY_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/apache2-php-fpm
 
 jobs:
   build:

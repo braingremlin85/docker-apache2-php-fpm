@@ -1,13 +1,13 @@
-# docker-apache2-php82-fpm
-minimal alpine based image with apache2 and php-fpm82
+# docker-apache-php-fpm
+minimal alpine based image with apache2 and php-fpm
 
 .env file get bypassed by manually set environment variables from portainer gui
 
-Docker hub: https://hub.docker.com/r/braingremlin/apache2-php82-fpm
+Docker hub: https://hub.docker.com/r/braingremlin/apache2-php-fpm
 
 ## Build ##
 
-sudo docker buildx build --platform linux/amd64,linux/arm64 -t braingremlin/apache2-php82-fpm:latest -t braingremlin/apache2-php82-fpm:V --push .
+sudo docker buildx build --platform linux/amd64,linux/arm64 -t braingremlin/apache2-php-fpm:latest -t braingremlin/apache2-php-fpm:V --push .
 
 
 ## XDEBUG ##

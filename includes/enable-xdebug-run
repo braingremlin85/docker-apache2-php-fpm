@@ -2,9 +2,9 @@
 # shellcheck shell=bash
 
 if [ "$XDEBUG" == "true" ]; then
-    cp /etc/php82/conf.d/50_xdebug.off /etc/php82/conf.d/50_xdebug.ini
+    cp /etc/php${PHP_VERSION}/conf.d/50_xdebug.off /etc/php${PHP_VERSION}/conf.d/50_xdebug.ini
     echo "XDEBUG enabled!"
 else
-    rm -f "/etc/php82/conf.d/50_xdebug.ini"
+    rm -f "/etc/php${PHP_VERSION}/conf.d/50_xdebug.ini"
     echo "XDEBUG disabled!"
 fi

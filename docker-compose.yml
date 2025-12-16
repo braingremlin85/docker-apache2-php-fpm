@@ -1,7 +1,7 @@
 services:
   dokuwiki-alpine:
     container_name: apache2
-    image: braingremlin/apache2-php82-fpm:latest
+    image: braingremlin/apache2-php-fpm:latest
     restart: unless-stopped
     # if a reverse proxy is used in front of this webserver you need to set a common network for the proxy and the proxied webservers to allow direct internal communication
     networks:
@@ -17,7 +17,10 @@ services:
      #- /path/to/php.ini:/usr/local/etc/php/php.ini
     env_file:
       - stack.env # put environment variables on this file
-
+    # crowdsec parser labels
+    labels:
+      - crowdsec.enable=true
+      - crowdsec.labels.type=apache2
 # create the network if doesn't exist
 networks:
   npm-bridge:

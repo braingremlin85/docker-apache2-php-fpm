@@ -1,8 +1,9 @@
 TODO
-
+*.code-workspace
 *.kate-swp
 *.bak
 *.old
+.vscode/
 
 # OS generated files #
 ######################

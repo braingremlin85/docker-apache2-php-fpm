@@ -10,10 +10,10 @@ ARG ARCH=x86_64
 
 FROM build-${TARGETARCH} AS build
 
-ENV PHP_VERSION="82"
+ENV PHP_VERSION="85"
 ARG S6_OVERLAY_VERSION="3.2.1.0"
-ARG INCLUDES_BASEURL="https://raw.githubusercontent.com/braingremlin85/docker-apache2-php82-fpm/master/includes/"
-#ARG INCLUDES_BASEURL="includes/"
+ARG INCLUDES_BASEURL="https://raw.githubusercontent.com/braingremlin85/docker-apache-php-fpm/master/includes/"
+#qARG INCLUDES_BASEURL="includes/"
 
 
 RUN apk update && apk upgrade
@@ -103,7 +103,7 @@ ADD ${INCLUDES_BASEURL}www.conf /etc/php${PHP_VERSION}/php-fpm.d/www.conf
 
 ADD ${INCLUDES_BASEURL}php.ini /usr/local/etc/php/php.ini
 
-ADD ${INCLUDES_BASEURL}50_xdebug.ini /etc/php82/conf.d/50_xdebug.off
+ADD ${INCLUDES_BASEURL}50_xdebug.ini /etc/php${PHP_VERSION}/conf.d/50_xdebug.off
 
 ENTRYPOINT ["/init"]
 
