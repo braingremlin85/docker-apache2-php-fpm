@@ -1,5 +1,8 @@
 name: Docker
 
+# commit to main -> add tag -> push tags
+
+
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
@@ -110,7 +113,9 @@ jobs:
             type=raw,value=${{ github.ref_name }} # pass tag as raw value, due to vx.x-8x format not being semver friendly
             #type=semver,pattern={{version}},value=${{ github.ref_name }}
             #type=semver,pattern={{major}}.{{minor}},value=${{ github.ref_name }}
-            type=raw,value=latest,enable={{is_default_branch}}
+            #type=raw,value=latest,enable={{is_default_branch}}
+            # force "latest" tag
+            type=raw,value=latest 
 
       - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
