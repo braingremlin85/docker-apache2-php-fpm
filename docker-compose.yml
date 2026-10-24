@@ -1,5 +1,5 @@
 services:
-  dokuwiki-alpine:
+  apache2:
     container_name: apache2
     image: braingremlin/apache2-php-fpm:latest
     restart: unless-stopped
@@ -15,6 +15,8 @@ services:
       - ${DATA_VOLUME:-data}:/var/www/localhost/htdocs # DATA_VOLUME variable defined on .env file
      # if you need customized php.ini mount it here, .user.ini is also enabled https://www.php.net/manual/it/configuration.file.per-user.php
      #- /path/to/php.ini:/usr/local/etc/php/php.ini
+     # if you need customized httpd.conf
+     #- /path/to/httpd.conf:/etc/apache2/httpd.conf
     env_file:
       - stack.env # put environment variables on this file
     # crowdsec parser labels

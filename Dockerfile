@@ -11,9 +11,9 @@ ARG ARCH=x86_64
 FROM build-${TARGETARCH} AS build
 
 ENV PHP_VERSION="85"
-ARG S6_OVERLAY_VERSION="3.2.1.0"
-ARG INCLUDES_BASEURL="https://raw.githubusercontent.com/braingremlin85/docker-apache2-php-fpm/master/includes/"
-#ARG INCLUDES_BASEURL="includes/"
+ARG S6_OVERLAY_VERSION="3.2.3.2"
+#ARG INCLUDES_BASEURL="https://raw.githubusercontent.com/braingremlin85/docker-apache2-php-fpm/master/includes/"
+ARG INCLUDES_BASEURL="includes/"
 
 
 RUN apk update && apk upgrade
@@ -38,23 +38,26 @@ RUN apk --no-cache add freetype-dev \
 
 RUN apk add php${PHP_VERSION}-pecl-xdebug
 	
-# create a user for running services
-#RUN groupmod -g 1000 users && useradd -u 911 -U -d /config -s /bin/false abc && usermod -G users abc
+# download and istall s6-overlay
+RUN DOWNLOAD_URL=$(curl -s https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep 'browser_download_url' | grep 's6-overlay-noarch\.tar\.xz"' | cut -d\" -f4) \
+    && wget -O s6-overlay-noarch.tar.xz "${DOWNLOAD_URL}" \
+    && tar -C / -Jxpf s6-overlay-noarch.tar.xz \
+    && rm s6-overlay-noarch.tar.xz
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+RUN DOWNLOAD_URL=$(curl -s https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep 'browser_download_url' | grep "s6-overlay-${ARCH}\.tar\.xz\"" | cut -d\" -f4) \
+    && wget -O s6-overlay-${ARCH}.tar.xz "${DOWNLOAD_URL}" \
+    && tar -C / -Jxpf s6-overlay-${ARCH}.tar.xz \
+    && rm s6-overlay-${ARCH}.tar.xz
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCH}.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-${ARCH}.tar.xz
+RUN DOWNLOAD_URL=$(curl -s https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep 'browser_download_url' | grep 's6-overlay-symlinks-noarch\.tar\.xz"' | cut -d\" -f4) \
+    && wget -O s6-overlay-symlinks-noarch.tar.xz "${DOWNLOAD_URL}" \
+    && tar -C / -Jxpf s6-overlay-symlinks-noarch.tar.xz \
+    && rm s6-overlay-symlinks-noarch.tar.xz
 
-
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz
-
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz
-
-RUN rm -rf /tmp/*
+RUN DOWNLOAD_URL=$(curl -s https://api.github.com/repos/just-containers/s6-overlay/releases/latest | grep 'browser_download_url' | grep 's6-overlay-symlinks-arch\.tar\.xz"' | cut -d\" -f4) \
+    && wget -O s6-overlay-symlinks-arch.tar.xz "${DOWNLOAD_URL}" \
+    && tar -C / -Jxpf s6-overlay-symlinks-arch.tar.xz \
+    && rm s6-overlay-symlinks-arch.tar.xz
 
 # map user and group
 ADD ${INCLUDES_BASEURL}init-usermap-type /etc/s6-overlay/s6-rc.d/init-usermap/type
@@ -64,7 +67,7 @@ RUN chmod +x /etc/s6-overlay/s6-rc.d/init-usermap/run
 # set service dependencies
 RUN	mkdir /etc/s6-overlay/s6-rc.d/init-usermap/dependencies.d && touch /etc/s6-overlay/s6-rc.d/init-usermap/dependencies.d/base
 # enable service
-RUN	touch /etc/s6-overlay/s6-rc.d/user/contents.d/init-usermap
+RUN	touch /etc/s6-overlay/user-bundles.d/user/contents.d/init-usermap
 
 # set system timezone
 ADD ${INCLUDES_BASEURL}set-timezone-type /etc/s6-overlay/s6-rc.d/set-timezone/type
@@ -72,7 +75,7 @@ ADD ${INCLUDES_BASEURL}set-timezone-up /etc/s6-overlay/s6-rc.d/set-timezone/up
 ADD ${INCLUDES_BASEURL}set-timezone-run /etc/s6-overlay/s6-rc.d/set-timezone/run
 RUN chmod +x /etc/s6-overlay/s6-rc.d/set-timezone/run
 RUN	mkdir /etc/s6-overlay/s6-rc.d/set-timezone/dependencies.d && touch /etc/s6-overlay/s6-rc.d/set-timezone/dependencies.d/base
-RUN	touch /etc/s6-overlay/s6-rc.d/user/contents.d/set-timezone
+RUN	touch /etc/s6-overlay/user-bundles.d/user/contents.d/set-timezone
 
 # check if xdebug is enabled
 ADD ${INCLUDES_BASEURL}enable-xdebug-type /etc/s6-overlay/s6-rc.d/enable-xdebug/type
@@ -80,21 +83,21 @@ ADD ${INCLUDES_BASEURL}enable-xdebug-up /etc/s6-overlay/s6-rc.d/enable-xdebug/up
 ADD ${INCLUDES_BASEURL}enable-xdebug-run /etc/s6-overlay/s6-rc.d/enable-xdebug/run
 RUN chmod +x /etc/s6-overlay/s6-rc.d/enable-xdebug/run
 RUN	mkdir /etc/s6-overlay/s6-rc.d/enable-xdebug/dependencies.d && touch /etc/s6-overlay/s6-rc.d/enable-xdebug/dependencies.d/base
-RUN	touch /etc/s6-overlay/s6-rc.d/user/contents.d/enable-xdebug
+RUN	touch /etc/s6-overlay/user-bundles.d/user/contents.d/enable-xdebug
 
 # run apache2
 ADD ${INCLUDES_BASEURL}svc-httpd-type /etc/s6-overlay/s6-rc.d/svc-httpd/type
 ADD ${INCLUDES_BASEURL}svc-httpd-run /etc/s6-overlay/s6-rc.d/svc-httpd/run
 RUN chmod +x /etc/s6-overlay/s6-rc.d/svc-httpd/run
 RUN	mkdir /etc/s6-overlay/s6-rc.d/svc-httpd/dependencies.d && touch /etc/s6-overlay/s6-rc.d/svc-httpd/dependencies.d/init-usermap  && touch /etc/s6-overlay/s6-rc.d/svc-httpd/dependencies.d/enable-xdebug
-RUN	touch /etc/s6-overlay/s6-rc.d/user/contents.d/svc-httpd
+RUN	touch /etc/s6-overlay/user-bundles.d/user/contents.d/svc-httpd
 
 # run php-fpm
 ADD ${INCLUDES_BASEURL}svc-php-fpm-type /etc/s6-overlay/s6-rc.d/svc-php-fpm/type
 ADD ${INCLUDES_BASEURL}svc-php-fpm-run /etc/s6-overlay/s6-rc.d/svc-php-fpm/run
 RUN chmod +x /etc/s6-overlay/s6-rc.d/svc-php-fpm/run
 RUN	mkdir /etc/s6-overlay/s6-rc.d/svc-php-fpm/dependencies.d && touch /etc/s6-overlay/s6-rc.d/svc-php-fpm/dependencies.d/svc-httpd
-RUN	touch /etc/s6-overlay/s6-rc.d/user/contents.d/svc-php-fpm
+RUN	touch /etc/s6-overlay/user-bundles.d/user/contents.d/svc-php-fpm
 
 	
 ADD ${INCLUDES_BASEURL}httpd.conf /etc/apache2/httpd.conf
